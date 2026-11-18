@@ -1,0 +1,52 @@
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("../font/Vazirmatn-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --accent: #9d4edd;
+    --accent-strong: #7c3aed;
+}
+
+body {
+    font-family: "Vazirmatn", sans-serif;
+    background-color: #0b0b12;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--accent);
+    --bs-btn-border-color: var(--accent);
+    --bs-btn-hover-bg: var(--accent-strong);
+    --bs-btn-hover-border-color: var(--accent-strong);
+    --bs-btn-active-bg: var(--accent-strong);
+    --bs-btn-active-border-color: var(--accent-strong);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--accent);
+    --bs-btn-border-color: var(--accent);
+    --bs-btn-hover-bg: var(--accent-strong);
+    --bs-btn-hover-border-color: var(--accent-strong);
+    --bs-btn-active-bg: var(--accent-strong);
+    --bs-btn-active-border-color: var(--accent-strong);
+}
+
+a {
+    color: var(--accent);
+}
+
+.brand-icon {
+    width: 96px;
+    border-radius: 20px;
+}
+
+.atom-canvas {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    border-radius: 14px;
+    background-color: #050508;
+}

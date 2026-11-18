@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لی-بور | مدل اتمی بور</title>
+    <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="stylesheet" href="css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="css/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container py-4">
+        <header class="text-center mb-5">
+            <img src="images/icon.png" alt="لی-بور" class="brand-icon">
+            <h1 class="mt-3 mb-1">لی-بور</h1>
+            <p class="text-secondary mb-0">مدل اتمی بور را بر اساس نوترون‌ها، پروتون‌ها و الکترون‌ها بساز و تصویر آن را دریافت کن</p>
+        </header>
+
+        <main class="row justify-content-center g-4">
+            <div class="col-12 col-md-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header text-center">
+                        <i class="bi bi-atom fs-4 me-2"></i>
+                        مشخصات اتم
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="atom-form">
+                            <div class="mb-3">
+                                <label for="neutrons" class="form-label d-flex align-items-center gap-2">
+                                    <i class="bi bi-circle-slash text-secondary"></i>
+                                    نوترون
+                                </label>
+                                <input type="number" id="neutrons" class="form-control" min="0" step="1" value="4"
+                                    placeholder="تعداد نوترون">
+                            </div>
+                            <div class="mb-3">
+                                <label for="protons" class="form-label d-flex align-items-center gap-2">
+                                    <i class="bi bi-record-circle text-secondary"></i>
+                                    پروتون
+                                </label>
+                                <input type="number" id="protons" class="form-control" min="0" step="1" value="3"
+                                    placeholder="تعداد پروتون">
+                            </div>
+                            <div class="mb-4">
+                                <label for="electrons" class="form-label d-flex align-items-center gap-2">
+                                    <i class="bi bi-dot text-secondary"></i>
+                                    الکترون
+                                </label>
+                                <input type="number" id="electrons" class="form-control" min="0" step="1" value="3"
+                                    placeholder="تعداد الکترون">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100" id="generate-btn">
+                                <i class="bi bi-magic fs-5 me-2"></i>
+                                ساخت اتم
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="bi bi-image fs-4 me-2"></i>
+                            تصویر اتم
+                        </span>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="download-btn" disabled>
+                            <i class="bi bi-download me-1"></i>
+                            دانلود تصویر
+                        </button>
+                    </div>
+                    <div class="card-body d-flex flex-column align-items-center p-4">
+                        <canvas id="atom-canvas" width="900" height="900" class="atom-canvas"></canvas>
+                        <p class="text-secondary small mt-3 mb-0" id="atom-caption">
+                            <i class="bi bi-info-circle me-1"></i>
+                            تعداد‌ها را وارد کن و روی «ساخت اتم» بزن تا تصویر ساخته شود.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>
