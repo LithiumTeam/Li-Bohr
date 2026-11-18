@@ -10,6 +10,129 @@ let lastCounts = null;
 const SHELL_CAPACITIES = [2, 8, 18, 32, 50, 72];
 const GOLDEN = 2.399963;
 const STAR_SEED = 1337;
+const FA_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+
+const ELEMENTS = [
+    null,
+    ["H", "Hydrogen", "هیدروژن"],
+    ["He", "Helium", "هلیوم"],
+    ["Li", "Lithium", "لیتیوم"],
+    ["Be", "Beryllium", "بریلیم"],
+    ["B", "Boron", "بور"],
+    ["C", "Carbon", "کربن"],
+    ["N", "Nitrogen", "نیتروژن"],
+    ["O", "Oxygen", "اکسیژن"],
+    ["F", "Fluorine", "فلوئور"],
+    ["Ne", "Neon", "نئون"],
+    ["Na", "Sodium", "سدیم"],
+    ["Mg", "Magnesium", "منیزیم"],
+    ["Al", "Aluminium", "آلومینیم"],
+    ["Si", "Silicon", "سیلیسیم"],
+    ["P", "Phosphorus", "فسفر"],
+    ["S", "Sulfur", "گوگرد"],
+    ["Cl", "Chlorine", "کلر"],
+    ["Ar", "Argon", "آرگون"],
+    ["K", "Potassium", "پتاسیم"],
+    ["Ca", "Calcium", "کلسیم"],
+    ["Sc", "Scandium", "اسکاندیم"],
+    ["Ti", "Titanium", "تیتانیم"],
+    ["V", "Vanadium", "وانادیم"],
+    ["Cr", "Chromium", "کروم"],
+    ["Mn", "Manganese", "منگنز"],
+    ["Fe", "Iron", "آهن"],
+    ["Co", "Cobalt", "کبالت"],
+    ["Ni", "Nickel", "نیکل"],
+    ["Cu", "Copper", "مس"],
+    ["Zn", "Zinc", "روی"],
+    ["Ga", "Gallium", "گالیم"],
+    ["Ge", "Germanium", "ژرمانیم"],
+    ["As", "Arsenic", "آرسنیک"],
+    ["Se", "Selenium", "سلنیم"],
+    ["Br", "Bromine", "برم"],
+    ["Kr", "Krypton", "کریپتون"],
+    ["Rb", "Rubidium", "روبیدیم"],
+    ["Sr", "Strontium", "استرانسیم"],
+    ["Y", "Yttrium", "ایتریم"],
+    ["Zr", "Zirconium", "زیرکونیم"],
+    ["Nb", "Niobium", "نیوبیم"],
+    ["Mo", "Molybdenum", "مولیبدن"],
+    ["Tc", "Technetium", "تکنسیم"],
+    ["Ru", "Ruthenium", "روتنیم"],
+    ["Rh", "Rhodium", "رودیم"],
+    ["Pd", "Palladium", "پالادیم"],
+    ["Ag", "Silver", "نقره"],
+    ["Cd", "Cadmium", "کادمیم"],
+    ["In", "Indium", "ایندیم"],
+    ["Sn", "Tin", "قلع"],
+    ["Sb", "Antimony", "آنتیموان"],
+    ["Te", "Tellurium", "تلوریم"],
+    ["I", "Iodine", "ید"],
+    ["Xe", "Xenon", "زنون"],
+    ["Cs", "Caesium", "سزیم"],
+    ["Ba", "Barium", "باریم"],
+    ["La", "Lanthanum", "لانتان"],
+    ["Ce", "Cerium", "سریم"],
+    ["Pr", "Praseodymium", "پرازئودیمیم"],
+    ["Nd", "Neodymium", "نئودیمیم"],
+    ["Pm", "Promethium", "پرومتیم"],
+    ["Sm", "Samarium", "ساماریم"],
+    ["Eu", "Europium", "یوروپیم"],
+    ["Gd", "Gadolinium", "گادولینیم"],
+    ["Tb", "Terbium", "تربیم"],
+    ["Dy", "Dysprosium", "دیسپروزیم"],
+    ["Ho", "Holmium", "هولمیم"],
+    ["Er", "Erbium", "اربیم"],
+    ["Tm", "Thulium", "تولیم"],
+    ["Yb", "Ytterbium", "ایتربیم"],
+    ["Lu", "Lutetium", "لوتتیم"],
+    ["Hf", "Hafnium", "هافنیم"],
+    ["Ta", "Tantalum", "تانتال"],
+    ["W", "Tungsten", "تنگستن"],
+    ["Re", "Rhenium", "رنیوم"],
+    ["Os", "Osmium", "اسمیم"],
+    ["Ir", "Iridium", "ایریدیم"],
+    ["Pt", "Platinum", "پلاتین"],
+    ["Au", "Gold", "طلا"],
+    ["Hg", "Mercury", "جیوه"],
+    ["Tl", "Thallium", "تالیم"],
+    ["Pb", "Lead", "سرب"],
+    ["Bi", "Bismuth", "بیسموت"],
+    ["Po", "Polonium", "پولونیم"],
+    ["At", "Astatine", "آستاتین"],
+    ["Rn", "Radon", "رادون"],
+    ["Fr", "Francium", "فرانسیم"],
+    ["Ra", "Radium", "رادیم"],
+    ["Ac", "Actinium", "اکتینیم"],
+    ["Th", "Thorium", "توریم"],
+    ["Pa", "Protactinium", "پروتاکتینیم"],
+    ["U", "Uranium", "اورانیم"],
+    ["Np", "Neptunium", "نپتونیوم"],
+    ["Pu", "Plutonium", "پلوتونیم"],
+    ["Am", "Americium", "امریسیم"],
+    ["Cm", "Curium", "کوریم"],
+    ["Bk", "Berkelium", "برکلیم"],
+    ["Cf", "Californium", "کالیفرنیم"],
+    ["Es", "Einsteinium", "اینشتینیم"],
+    ["Fm", "Fermium", "فرمیم"],
+    ["Md", "Mendelevium", "مندلیفیم"],
+    ["No", "Nobelium", "نوبلیم"],
+    ["Lr", "Lawrencium", "لارنسیم"],
+    ["Rf", "Rutherfordium", "رادرفوردیم"],
+    ["Db", "Dubnium", "دوبنیم"],
+    ["Sg", "Seaborgium", "سیبورگیم"],
+    ["Bh", "Bohrium", "بوریم"],
+    ["Hs", "Hassium", "هاسیم"],
+    ["Mt", "Meitnerium", "مایتنریم"],
+    ["Ds", "Darmstadtium", "دارمشتادیم"],
+    ["Rg", "Roentgenium", "رونتگنیم"],
+    ["Cn", "Copernicium", "کوپرنیسیم"],
+    ["Nh", "Nihonium", "نیهونیوم"],
+    ["Fl", "Flerovium", "فلروویوم"],
+    ["Mc", "Moscovium", "مسکوویم"],
+    ["Lv", "Livermorium", "لیورموریوم"],
+    ["Ts", "Tennessine", "تنسین"],
+    ["Og", "Oganesson", "اوگانسون"],
+];
 
 const PALETTES = {
     light: {
@@ -24,9 +147,10 @@ const PALETTES = {
         trailRgb: "124, 58, 237",
         proton: ["#ffffff", "#b9c4dc", "rgba(190, 180, 230, 0.8)"],
         neutron: ["#9db1d6", "#3e4c6b", "rgba(100, 120, 180, 0.8)"],
+        nameColor: "#57409e",
     },
     dark: {
-        bg: "#100a1c",
+        bg: "#0a0512",
         stars: { count: 90, color: "#d9c7ff", min: 0.12, range: 0.38 },
         vignette: "rgba(0, 0, 0, 0.5)",
         orbitWide: "rgba(155, 80, 222, 0.16)",
@@ -37,6 +161,7 @@ const PALETTES = {
         trailRgb: "168, 85, 247",
         proton: ["#ffffff", "#bfb3e8", "rgba(190, 170, 240, 0.8)"],
         neutron: ["#8f7fd0", "#3a3160", "rgba(90, 70, 150, 0.9)"],
+        nameColor: "#e6dcff",
     },
 };
 
@@ -143,6 +268,28 @@ function drawSphere(x, y, r, colors, pal) {
     ctx.restore();
 }
 
+function toFaDigits(n) {
+    return String(n).split("").map((d) => FA_DIGITS[Number(d)]).join("");
+}
+
+function drawAtomName(protons, neutrons, pal) {
+    const element = ELEMENTS[protons];
+    if (!element) return;
+    const en = element[1] + (neutrons > 0 ? "-" + (protons + neutrons) : "");
+    const fa = element[2] + (neutrons > 0 ? "-" + toFaDigits(protons + neutrons) : "");
+    ctx.save();
+    ctx.font = 'bold 40px "Vazirmatn", sans-serif';
+    ctx.fillStyle = pal.nameColor;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "right";
+    ctx.direction = "rtl";
+    ctx.fillText(fa, canvas.width - 44, 40);
+    ctx.textAlign = "left";
+    ctx.direction = "ltr";
+    ctx.fillText(en, 44, 40);
+    ctx.restore();
+}
+
 function drawAtom(protons, neutrons, electrons, pal) {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -183,10 +330,13 @@ function drawAtom(protons, neutrons, electrons, pal) {
             drawSphere(x, y, particleR, isProton ? pal.proton : pal.neutron, pal);
         }
     }
+
+    drawAtomName(protons, neutrons, pal);
 }
 
-function render() {
+async function render() {
     if (!lastCounts) return;
+    if (document.fonts && document.fonts.load) await document.fonts.load('40px "Vazirmatn"');
     drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()]);
     atomUrl = canvas.toDataURL("image/png");
 }
