@@ -3,12 +3,46 @@ const canvas = document.getElementById("atom-canvas");
 const ctx = canvas.getContext("2d");
 const downloadBtn = document.getElementById("download-btn");
 const captionText = document.getElementById("caption-text");
+const themeToggle = document.getElementById("theme-toggle");
 let atomUrl = null;
+let lastCounts = null;
 
 const SHELL_CAPACITIES = [2, 8, 18, 32, 50, 72];
 const GOLDEN = 2.399963;
 const STAR_SEED = 1337;
-const STAR_COUNT = 90;
+
+const PALETTES = {
+    light: {
+        bg: "#f6f4fc",
+        stars: { count: 40, color: "#7c3aed", min: 0.04, range: 0.08 },
+        vignette: "rgba(90, 70, 150, 0.08)",
+        orbitWide: "rgba(124, 58, 237, 0.10)",
+        orbitCore: "rgba(124, 58, 237, 0.55)",
+        orbitGlow: "#7c3aed",
+        electron: ["#ffffff", "#c4a5ff", "#7c3aed"],
+        electronGlow: "#9d4edd",
+        trailRgb: "124, 58, 237",
+        proton: ["#ffffff", "#b9c4dc", "rgba(190, 180, 230, 0.8)"],
+        neutron: ["#9db1d6", "#3e4c6b", "rgba(100, 120, 180, 0.8)"],
+    },
+    dark: {
+        bg: "#100a1c",
+        stars: { count: 90, color: "#d9c7ff", min: 0.12, range: 0.38 },
+        vignette: "rgba(0, 0, 0, 0.5)",
+        orbitWide: "rgba(155, 80, 222, 0.16)",
+        orbitCore: "rgba(179, 102, 255, 0.75)",
+        orbitGlow: "#9d4edd",
+        electron: ["#ffffff", "#c9a6ff", "#a855f7"],
+        electronGlow: "#9d4edd",
+        trailRgb: "168, 85, 247",
+        proton: ["#ffffff", "#bfb3e8", "rgba(190, 170, 240, 0.8)"],
+        neutron: ["#8f7fd0", "#3a3160", "rgba(90, 70, 150, 0.9)"],
+    },
+};
+
+function currentTheme() {
+    return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+}
 
 function fillShells(total) {
     const shells = [];
@@ -32,13 +66,13 @@ function mulberry32(seed) {
     };
 }
 
-function drawBackground(cx, cy, half) {
-    ctx.fillStyle = "#0c1226";
+function drawBackground(cx, cy, half, pal) {
+    ctx.fillStyle = pal.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const rand = mulberry32(STAR_SEED);
-    ctx.fillStyle = "#cdd8ff";
-    for (let i = 0; i < STAR_COUNT; i++) {
-        ctx.globalAlpha = 0.1 + rand() * 0.4;
+    ctx.fillStyle = pal.stars.color;
+    for (let i = 0; i < pal.stars.count; i++) {
+        ctx.globalAlpha = pal.stars.min + rand() * pal.stars.range;
         ctx.beginPath();
         ctx.arc(rand() * canvas.width, rand() * canvas.height, 0.4 + rand() * 1.1, 0, Math.PI * 2);
         ctx.fill();
@@ -46,21 +80,21 @@ function drawBackground(cx, cy, half) {
     ctx.globalAlpha = 1;
     const vignette = ctx.createRadialGradient(cx, cy, half * 0.55, cx, cy, half * 0.98);
     vignette.addColorStop(0, "rgba(0, 0, 0, 0)");
-    vignette.addColorStop(1, "rgba(2, 6, 18, 0.55)");
+    vignette.addColorStop(1, pal.vignette);
     ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawOrbit(cx, cy, r) {
+function drawOrbit(cx, cy, r, pal) {
     ctx.save();
-    ctx.strokeStyle = "rgba(45, 212, 191, 0.14)";
+    ctx.strokeStyle = pal.orbitWide;
     ctx.lineWidth = 7;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.strokeStyle = "rgba(94, 234, 212, 0.6)";
+    ctx.strokeStyle = pal.orbitCore;
     ctx.lineWidth = 2;
-    ctx.shadowColor = "#2dd4bf";
+    ctx.shadowColor = pal.orbitGlow;
     ctx.shadowBlur = 14;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -68,14 +102,14 @@ function drawOrbit(cx, cy, r) {
     ctx.restore();
 }
 
-function drawElectron(cx, cy, orbitR, angle) {
+function drawElectron(cx, cy, orbitR, angle, pal) {
     ctx.save();
     ctx.lineCap = "round";
     ctx.lineWidth = 2.5;
     for (let k = 0; k < 10; k++) {
         const from = angle + 0.8 - (k + 1) * 0.08;
         const to = angle + 0.8 - k * 0.08;
-        ctx.strokeStyle = "rgba(34, 211, 238, " + (0.05 + (k / 10) * 0.3).toFixed(2) + ")";
+        ctx.strokeStyle = "rgba(" + pal.trailRgb + ", " + (0.05 + (k / 10) * 0.3).toFixed(2) + ")";
         ctx.beginPath();
         ctx.arc(cx, cy, orbitR, from, to);
         ctx.stroke();
@@ -83,10 +117,10 @@ function drawElectron(cx, cy, orbitR, angle) {
     const x = cx + orbitR * Math.cos(angle);
     const y = cy + orbitR * Math.sin(angle);
     const grad = ctx.createRadialGradient(x - 4, y - 5, 1, x, y, 11);
-    grad.addColorStop(0, "#ffffff");
-    grad.addColorStop(0.45, "#a5f3fc");
-    grad.addColorStop(1, "#22d3ee");
-    ctx.shadowColor = "#22d3ee";
+    grad.addColorStop(0, pal.electron[0]);
+    grad.addColorStop(0.45, pal.electron[1]);
+    grad.addColorStop(1, pal.electron[2]);
+    ctx.shadowColor = pal.electronGlow;
     ctx.shadowBlur = 18;
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -95,13 +129,13 @@ function drawElectron(cx, cy, orbitR, angle) {
     ctx.restore();
 }
 
-function drawSphere(x, y, r, inner, outer, glow) {
+function drawSphere(x, y, r, colors, pal) {
     ctx.save();
-    ctx.shadowColor = glow;
+    ctx.shadowColor = colors[2];
     ctx.shadowBlur = 10;
     const grad = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.15, x, y, r);
-    grad.addColorStop(0, inner);
-    grad.addColorStop(1, outer);
+    grad.addColorStop(0, colors[0]);
+    grad.addColorStop(1, colors[1]);
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -109,13 +143,13 @@ function drawSphere(x, y, r, inner, outer, glow) {
     ctx.restore();
 }
 
-function drawAtom(protons, neutrons, electrons) {
+function drawAtom(protons, neutrons, electrons, pal) {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
     const half = Math.min(cx, cy);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBackground(cx, cy, half);
+    drawBackground(cx, cy, half, pal);
 
     const shells = fillShells(electrons);
     const nucleons = protons + neutrons;
@@ -124,13 +158,13 @@ function drawAtom(protons, neutrons, electrons) {
     const orbitStart = nucleusR + 56;
     const orbitGap = shells.length > 1 ? (half - 52 - orbitStart) / (shells.length - 1) : 0;
 
-    shells.forEach((_, i) => drawOrbit(cx, cy, orbitStart + i * orbitGap));
+    shells.forEach((_, i) => drawOrbit(cx, cy, orbitStart + i * orbitGap, pal));
 
     shells.forEach((count, i) => {
         const radius = orbitStart + i * orbitGap;
         const offset = -Math.PI / 2 + i * 0.4;
         for (let j = 0; j < count; j++) {
-            drawElectron(cx, cy, radius, offset + (j / count) * Math.PI * 2);
+            drawElectron(cx, cy, radius, offset + (j / count) * Math.PI * 2, pal);
         }
     });
 
@@ -146,10 +180,15 @@ function drawAtom(protons, neutrons, electrons) {
             const y = cy + dist * Math.sin(angle);
             const isProton = protons > 0 &&
                 Math.floor((i + 0.5) * protons / nucleons) > Math.floor(i * protons / nucleons);
-            if (isProton) drawSphere(x, y, particleR, "#ffffff", "#b9c4dc", "rgba(232, 238, 252, 0.8)");
-            else drawSphere(x, y, particleR, "#9db1d6", "#3e4c6b", "rgba(70, 90, 140, 0.9)");
+            drawSphere(x, y, particleR, isProton ? pal.proton : pal.neutron, pal);
         }
     }
+}
+
+function render() {
+    if (!lastCounts) return;
+    drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()]);
+    atomUrl = canvas.toDataURL("image/png");
 }
 
 form.addEventListener("submit", (e) => {
@@ -158,10 +197,18 @@ form.addEventListener("submit", (e) => {
     const protons = Math.max(0, parseInt(document.getElementById("protons").value, 10) || 0);
     const electrons = Math.max(0, parseInt(document.getElementById("electrons").value, 10) || 0);
 
-    drawAtom(protons, neutrons, electrons);
-    atomUrl = canvas.toDataURL("image/png");
+    lastCounts = { protons, neutrons, electrons };
+    render();
     downloadBtn.disabled = false;
     captionText.textContent = `پروتون: ${protons} - نوترون: ${neutrons} - الکترون: ${electrons}`;
+});
+
+themeToggle.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("li-bohr-theme", next);
+    themeToggle.setAttribute("aria-checked", String(next === "dark"));
+    render();
 });
 
 downloadBtn.addEventListener("click", () => {
@@ -171,3 +218,5 @@ downloadBtn.addEventListener("click", () => {
     link.download = "li-bohr-atom.png";
     link.click();
 });
+
+render();

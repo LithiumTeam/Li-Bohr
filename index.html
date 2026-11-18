@@ -8,15 +8,28 @@
     <link rel="icon" type="image/png" href="images/icon.png">
     <link rel="stylesheet" href="css/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        const savedTheme = localStorage.getItem("li-bohr-theme");
+        if (savedTheme === "dark" || savedTheme === "light") document.documentElement.dataset.theme = savedTheme;
+    </script>
 </head>
 
 <body>
+    <header class="site-head">
+        <div class="brand">
+            <img class="brand-logo" src="images/icon.png" alt="Li-Bohr">
+            <span class="wordmark">Li-Bohr</span>
+        </div>
+        <button type="button" class="theme-switch" id="theme-toggle" role="switch" aria-checked="false"
+            aria-label="تغییر تم لایت و دارک">
+            <i class="bi bi-sun"></i>
+            <span class="switch-track"><span class="switch-knob"></span></span>
+            <i class="bi bi-moon-stars"></i>
+        </button>
+    </header>
+
     <div class="page">
-        <header class="site-head">
-            <img class="logo" src="images/icon.png" alt="Li-Bohr">
-            <h1 class="wordmark">Li-Bohr</h1>
-            <p class="tagline">مدل اتمی بور را بر اساس نوترون‌ها، پروتون‌ها و الکترون‌ها بساز و تصویر آن را دریافت کن</p>
-        </header>
+        <p class="tagline">مدل اتمی بور را بر اساس نوترون‌ها، پروتون‌ها و الکترون‌ها بساز و تصویر آن را دریافت کن</p>
 
         <main class="layout">
             <section class="card">
