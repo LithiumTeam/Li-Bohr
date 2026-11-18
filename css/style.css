@@ -18,6 +18,9 @@
     --stage: #f6f4fc;
     --radius: 16px;
     --shadow: 0 10px 30px rgba(16, 24, 48, 0.07);
+    --dot-proton: #b9c4dc;
+    --dot-neutron: #54628c;
+    --dot-electron: #7c3aed;
 }
 
 [data-theme="dark"] {
@@ -31,6 +34,9 @@
     --accent-soft: rgba(139, 92, 246, 0.18);
     --stage: #0a0614;
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    --dot-proton: #d8cff5;
+    --dot-neutron: #a493e0;
+    --dot-electron: #a855f7;
 }
 
 * {
@@ -189,8 +195,24 @@ body {
     margin-bottom: 8px;
 }
 
-.field-label .bi {
-    font-size: 16px;
+.particle-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+}
+
+.particle-dot.particle-proton {
+    background: var(--dot-proton);
+}
+
+.particle-dot.particle-neutron {
+    background: var(--dot-neutron);
+}
+
+.particle-dot.particle-electron {
+    background: var(--dot-electron);
 }
 
 .field input {
