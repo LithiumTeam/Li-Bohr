@@ -32,15 +32,15 @@
 }
 
 [data-theme="dark"] {
-    --bg: #0a0811;
-    --card: #12101d;
+    --bg: #07050d;
+    --card: #0e0c17;
     --ink: #e8e4f4;
     --muted: #8d86a8;
     --line: #241f36;
     --accent: #8b5cf6;
     --accent-hover: #a78bfa;
     --accent-soft: rgba(139, 92, 246, 0.18);
-    --stage: #0a0614;
+    --stage: #07040f;
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
     --dot-proton: #d8cff5;
     --dot-neutron: #a493e0;
