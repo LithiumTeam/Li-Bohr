@@ -1,52 +1,214 @@
 @font-face {
     font-family: "Vazirmatn";
     src: url("../font/Vazirmatn-Bold.woff2") format("woff2");
-    font-weight: 700;
+    font-weight: 400 900;
     font-style: normal;
     font-display: swap;
 }
 
 :root {
-    --accent: #9d4edd;
-    --accent-strong: #7c3aed;
+    --bg: #f2f4f9;
+    --card: #ffffff;
+    --ink: #141824;
+    --muted: #667085;
+    --line: #e4e8f0;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: rgba(37, 99, 235, 0.08);
+    --stage: #0c1226;
+    --radius: 16px;
+    --shadow: 0 10px 30px rgba(16, 24, 48, 0.07);
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
+    margin: 0;
     font-family: "Vazirmatn", sans-serif;
-    background-color: #0b0b12;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
 }
 
-.btn-primary {
-    --bs-btn-bg: var(--accent);
-    --bs-btn-border-color: var(--accent);
-    --bs-btn-hover-bg: var(--accent-strong);
-    --bs-btn-hover-border-color: var(--accent-strong);
-    --bs-btn-active-bg: var(--accent-strong);
-    --bs-btn-active-border-color: var(--accent-strong);
+.page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 48px 20px 64px;
 }
 
-.btn-outline-primary {
-    --bs-btn-color: var(--accent);
-    --bs-btn-border-color: var(--accent);
-    --bs-btn-hover-bg: var(--accent-strong);
-    --bs-btn-hover-border-color: var(--accent-strong);
-    --bs-btn-active-bg: var(--accent-strong);
-    --bs-btn-active-border-color: var(--accent-strong);
+.site-head {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
-a {
-    color: var(--accent);
-}
-
-.brand-icon {
-    width: 96px;
+.logo {
+    width: 88px;
+    height: 88px;
     border-radius: 20px;
 }
 
-.atom-canvas {
+.wordmark {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin: 14px 0 6px;
+}
+
+.tagline {
+    color: var(--muted);
+    margin: 0;
+    font-size: 14px;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    margin: 0 0 18px;
+}
+
+.card-title .bi {
+    color: var(--accent);
+    font-size: 20px;
+}
+
+.field {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.field-label .bi {
+    font-size: 16px;
+}
+
+.field input {
     width: 100%;
-    max-width: 520px;
+    padding: 12px 14px;
+    font: inherit;
+    color: var(--ink);
+    background: #fbfcfe;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 15px;
+    transition: background 0.15s, transform 0.05s;
+}
+
+.btn:active {
+    transform: scale(0.985);
+}
+
+.btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+}
+
+.btn-ghost {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 8px 14px;
+    font-size: 13px;
+}
+
+.btn-ghost:hover:not(:disabled) {
+    background: rgba(37, 99, 235, 0.16);
+}
+
+.preview-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.preview .card-title {
+    margin-bottom: 14px;
+}
+
+.stage {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--stage);
+}
+
+.stage canvas {
+    display: block;
+    width: 100%;
     height: auto;
-    border-radius: 14px;
-    background-color: #050508;
+}
+
+.caption {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin: 14px 0 0;
+}
+
+.caption .bi {
+    margin-inline-end: 6px;
+    color: var(--accent);
+}
+
+@media (max-width: 860px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
 }
