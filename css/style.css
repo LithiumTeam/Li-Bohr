@@ -48,15 +48,18 @@ body {
 
 .site-head {
     position: sticky;
-    top: 0;
+    top: 14px;
     z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-direction: row-reverse;
-    padding: 12px max(20px, calc((100vw - 1040px) / 2));
+    max-width: 1040px;
+    margin: 14px auto;
+    padding: 12px 18px;
     background: var(--card);
-    border-bottom: 1px solid var(--line);
+    border: 1px solid var(--line);
+    border-radius: 14px;
     box-shadow: var(--shadow);
 }
 
@@ -133,7 +136,7 @@ body {
 .page {
     max-width: 1040px;
     margin: 0 auto;
-    padding: 36px 20px 64px;
+    padding: 28px 20px 64px;
 }
 
 .tagline {
