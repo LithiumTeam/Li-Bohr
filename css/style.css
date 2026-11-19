@@ -156,10 +156,33 @@ body {
     color: var(--accent);
 }
 
+.head-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.head-github {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    font-size: 20px;
+    color: var(--muted);
+    transition: color 0.15s, background 0.15s;
+}
+
+.head-github:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
 .page {
     max-width: 1040px;
     margin: 0 auto;
-    padding: 28px 20px 24px;
+    padding: 28px 20px 64px;
 }
 
 .tagline {
@@ -333,33 +356,6 @@ body {
 .caption .bi {
     margin-inline-end: 6px;
     color: var(--accent);
-}
-
-.site-foot {
-    display: flex;
-    justify-content: center;
-    padding: 4px 20px 40px;
-}
-
-.foot-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 14px;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 6px 12px;
-    border-radius: 10px;
-    transition: color 0.15s, background 0.15s;
-}
-
-.foot-link .bi {
-    font-size: 16px;
-}
-
-.foot-link:hover {
-    color: var(--accent);
-    background: var(--accent-soft);
 }
 
 @media (max-width: 860px) {
