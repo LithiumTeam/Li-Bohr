@@ -15,7 +15,7 @@ let renderSeq = 0;
 const SHELL_CAPACITIES = [2, 8, 18, 32, 50, 72];
 const GOLDEN = 2.399963;
 const STAR_SEED = 1337;
-const BIG_LIMIT = 200;
+const BIG_LIMIT = 500;
 const FA_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
 
 const ELEMENTS = [
