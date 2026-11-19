@@ -4,12 +4,18 @@ const ctx = canvas.getContext("2d");
 const downloadBtn = document.getElementById("download-btn");
 const captionText = document.getElementById("caption-text");
 const themeToggle = document.getElementById("theme-toggle");
+const bigWarn = document.getElementById("big-warn");
+const bigWarnYes = document.getElementById("big-warn-yes");
+const bigWarnNo = document.getElementById("big-warn-no");
 let atomUrl = null;
 let lastCounts = null;
+let pendingCounts = null;
+let renderSeq = 0;
 
 const SHELL_CAPACITIES = [2, 8, 18, 32, 50, 72];
 const GOLDEN = 2.399963;
 const STAR_SEED = 1337;
+const BIG_LIMIT = 200;
 const FA_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
 
 const ELEMENTS = [
@@ -235,45 +241,95 @@ function drawOrbit(cx, cy, r, pal) {
     ctx.restore();
 }
 
-function drawElectron(cx, cy, orbitR, angle, pal) {
-    ctx.save();
-    ctx.lineCap = "round";
-    ctx.lineWidth = 2.5;
-    for (let k = 0; k < 10; k++) {
-        const from = angle + 0.8 - (k + 1) * 0.08;
-        const to = angle + 0.8 - k * 0.08;
-        ctx.strokeStyle = "rgba(" + pal.trailRgb + ", " + (0.05 + (k / 10) * 0.3).toFixed(2) + ")";
-        ctx.beginPath();
-        ctx.arc(cx, cy, orbitR, from, to);
-        ctx.stroke();
+const spriteCache = new Map();
+
+function getSphereSprite(colors, r) {
+    const key = "s" + colors[1] + "|" + Math.round(r * 100) / 100;
+    let sprite = spriteCache.get(key);
+    if (!sprite) {
+        const pad = 12;
+        const size = Math.max(2, Math.ceil(2 * r + 2 * pad));
+        const off = document.createElement("canvas");
+        off.width = size;
+        off.height = size;
+        const c2 = off.getContext("2d");
+        c2.save();
+        c2.shadowColor = colors[2];
+        c2.shadowBlur = 10;
+        const grad = c2.createRadialGradient(size / 2 - r * 0.35, size / 2 - r * 0.4, r * 0.15, size / 2, size / 2, r);
+        grad.addColorStop(0, colors[0]);
+        grad.addColorStop(1, colors[1]);
+        c2.fillStyle = grad;
+        c2.beginPath();
+        c2.arc(size / 2, size / 2, r, 0, Math.PI * 2);
+        c2.fill();
+        c2.restore();
+        sprite = { img: off, size };
+        spriteCache.set(key, sprite);
+        if (spriteCache.size > 128) spriteCache.clear();
     }
-    const x = cx + orbitR * Math.cos(angle);
-    const y = cy + orbitR * Math.sin(angle);
-    const grad = ctx.createRadialGradient(x - 4, y - 5, 1, x, y, 11);
-    grad.addColorStop(0, pal.electron[0]);
-    grad.addColorStop(0.45, pal.electron[1]);
-    grad.addColorStop(1, pal.electron[2]);
-    ctx.shadowColor = pal.electronGlow;
-    ctx.shadowBlur = 18;
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(x, y, 11, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    return sprite;
 }
 
-function drawSphere(x, y, r, colors, pal) {
-    ctx.save();
-    ctx.shadowColor = colors[2];
-    ctx.shadowBlur = 10;
-    const grad = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.15, x, y, r);
-    grad.addColorStop(0, colors[0]);
-    grad.addColorStop(1, colors[1]);
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+function getElectronSprite(pal) {
+    const key = "e" + pal.electron[1];
+    let sprite = spriteCache.get(key);
+    if (!sprite) {
+        const r = 11;
+        const pad = 20;
+        const size = 2 * r + 2 * pad;
+        const off = document.createElement("canvas");
+        off.width = size;
+        off.height = size;
+        const c2 = off.getContext("2d");
+        const c = size / 2;
+        c2.save();
+        c2.shadowColor = pal.electronGlow;
+        c2.shadowBlur = 18;
+        const grad = c2.createRadialGradient(c - 4, c - 5, 1, c, c, r);
+        grad.addColorStop(0, pal.electron[0]);
+        grad.addColorStop(0.45, pal.electron[1]);
+        grad.addColorStop(1, pal.electron[2]);
+        c2.fillStyle = grad;
+        c2.beginPath();
+        c2.arc(c, c, r, 0, Math.PI * 2);
+        c2.fill();
+        c2.restore();
+        sprite = { img: off, size };
+        spriteCache.set(key, sprite);
+        if (spriteCache.size > 128) spriteCache.clear();
+    }
+    return sprite;
+}
+
+function drawElectrons(cx, cy, shells, orbitStart, orbitGap, electrons, pal) {
+    const pos = [];
+    shells.forEach((count, i) => {
+        const radius = orbitStart + i * orbitGap;
+        const offset = -Math.PI / 2 + i * 0.4;
+        for (let j = 0; j < count; j++) {
+            pos.push({ radius, angle: offset + (j / count) * Math.PI * 2 });
+        }
+    });
+    const trailSegs = electrons > 5000 ? 0 : electrons > 1000 ? 2 : electrons > 200 ? 4 : 10;
+    const seg = 0.8 / trailSegs;
+    ctx.lineCap = "round";
+    ctx.lineWidth = 2.5;
+    for (let k = 0; k < trailSegs; k++) {
+        ctx.beginPath();
+        for (const el of pos) {
+            const from = el.angle + 0.8 - (k + 1) * seg;
+            const to = el.angle + 0.8 - k * seg;
+            ctx.moveTo(cx + el.radius * Math.cos(from), cy + el.radius * Math.sin(from));
+            ctx.arc(cx, cy, el.radius, from, to);
+        }
+        ctx.strokeStyle = "rgba(" + pal.trailRgb + ", " + (0.05 + (k / trailSegs) * 0.3).toFixed(2) + ")";
+        ctx.stroke();
+    }
+    const sp = getElectronSprite(pal);
+    for (const el of pos) {
+        ctx.drawImage(sp.img, cx + el.radius * Math.cos(el.angle) - sp.size / 2, cy + el.radius * Math.sin(el.angle) - sp.size / 2);
+    }
 }
 
 function toFaDigits(n) {
@@ -316,18 +372,14 @@ function drawAtom(protons, neutrons, electrons, pal) {
 
     shells.forEach((_, i) => drawOrbit(cx, cy, orbitStart + i * orbitGap, pal));
 
-    shells.forEach((count, i) => {
-        const radius = orbitStart + i * orbitGap;
-        const offset = -Math.PI / 2 + i * 0.4;
-        for (let j = 0; j < count; j++) {
-            drawElectron(cx, cy, radius, offset + (j / count) * Math.PI * 2, pal);
-        }
-    });
+    drawElectrons(cx, cy, shells, orbitStart, orbitGap, electrons, pal);
 
     if (nucleons > 0) {
         const rings = Math.ceil(Math.sqrt(nucleons));
         const particleR = Math.max(5, Math.min(15, nucleusR / (1.4 * rings)));
         const spread = (nucleusR - particleR) / Math.max(Math.sqrt(nucleons - 1), 1);
+        const pSprite = protons > 0 ? getSphereSprite(pal.proton, particleR) : null;
+        const nSprite = getSphereSprite(pal.neutron, particleR);
 
         for (let i = 0; i < nucleons; i++) {
             const angle = i * GOLDEN;
@@ -336,7 +388,8 @@ function drawAtom(protons, neutrons, electrons, pal) {
             const y = cy + dist * Math.sin(angle);
             const isProton = protons > 0 &&
                 Math.floor((i + 1) * protons / nucleons) > Math.floor(i * protons / nucleons);
-            drawSphere(x, y, particleR, isProton ? pal.proton : pal.neutron, pal);
+            const sp = isProton ? pSprite : nSprite;
+            ctx.drawImage(sp.img, x - sp.size / 2, y - sp.size / 2);
         }
     }
 
@@ -345,10 +398,12 @@ function drawAtom(protons, neutrons, electrons, pal) {
 
 async function render() {
     if (!lastCounts) return;
+    const seq = ++renderSeq;
     if (document.fonts && document.fonts.load) {
         await document.fonts.load('32px "Vazirmatn"');
         await document.fonts.load('bold 32px "JetBrains Mono"');
     }
+    if (seq !== renderSeq) return;
     drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()]);
     atomUrl = canvas.toDataURL("image/png");
 }
@@ -359,10 +414,31 @@ form.addEventListener("submit", (e) => {
     const protons = Math.max(0, parseInt(document.getElementById("protons").value, 10) || 0);
     const electrons = Math.max(0, parseInt(document.getElementById("electrons").value, 10) || 0);
 
+    if (Math.max(protons, neutrons, electrons) > BIG_LIMIT) {
+        pendingCounts = { protons, neutrons, electrons };
+        bigWarn.hidden = false;
+        return;
+    }
+    applyCounts(protons, neutrons, electrons);
+});
+
+function applyCounts(protons, neutrons, electrons) {
+    bigWarn.hidden = true;
+    pendingCounts = null;
     lastCounts = { protons, neutrons, electrons };
     render();
     downloadBtn.disabled = false;
     captionText.textContent = `پروتون: ${protons} - نوترون: ${neutrons} - الکترون: ${electrons}`;
+}
+
+bigWarnYes.addEventListener("click", () => {
+    if (!pendingCounts) return;
+    applyCounts(pendingCounts.protons, pendingCounts.neutrons, pendingCounts.electrons);
+});
+
+bigWarnNo.addEventListener("click", () => {
+    pendingCounts = null;
+    bigWarn.hidden = true;
 });
 
 themeToggle.addEventListener("click", () => {
