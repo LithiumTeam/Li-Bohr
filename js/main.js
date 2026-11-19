@@ -361,7 +361,6 @@ themeToggle.addEventListener("click", () => {
     const next = currentTheme() === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     localStorage.setItem("li-bohr-theme", next);
-    themeToggle.setAttribute("aria-checked", String(next === "dark"));
     render();
 });
 
