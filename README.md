@@ -15,10 +15,10 @@
 ## ساختار
 
 ```
-index.html               تنها فایل HTML
-css/style.css            تمام استایل‌ها
+index.html                   تنها فایل HTML
+css/style.css                تمام استایل‌ها
 css/bootstrap-icons.min.css  فایل آیکون های بوت استرپ
-js/main.js               فرم، رندر canvas و دانلود
-font/                    Vazirmatn Bold (فارسی) + JetBrains Mono Bold (عنوان و اسم انگلیسی اتم)
-images/icon.png          آیکون سایت و لوگوی هدر
+js/main.js                   فرم، رندر canvas و دانلود
+font/                        Vazirmatn Bold (فارسی) + JetBrains Mono Bold (عنوان و اسم انگلیسی اتم)
+images/icon.png              آیکون سایت و لوگوی هدر
 ```
