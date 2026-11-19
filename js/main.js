@@ -172,11 +172,19 @@ function currentTheme() {
 function fillShells(total) {
     const shells = [];
     let remaining = total;
+    let shellNo = 1;
     for (const cap of SHELL_CAPACITIES) {
         if (remaining <= 0) break;
         const filled = Math.min(cap, remaining);
         shells.push(filled);
         remaining -= filled;
+        shellNo++;
+    }
+    while (remaining > 0) {
+        const filled = Math.min(2 * shellNo * shellNo, remaining);
+        shells.push(filled);
+        remaining -= filled;
+        shellNo++;
     }
     return shells;
 }
@@ -327,7 +335,7 @@ function drawAtom(protons, neutrons, electrons, pal) {
             const x = cx + dist * Math.cos(angle);
             const y = cy + dist * Math.sin(angle);
             const isProton = protons > 0 &&
-                Math.floor((i + 0.5) * protons / nucleons) > Math.floor(i * protons / nucleons);
+                Math.floor((i + 1) * protons / nucleons) > Math.floor(i * protons / nucleons);
             drawSphere(x, y, particleR, isProton ? pal.proton : pal.neutron, pal);
         }
     }
