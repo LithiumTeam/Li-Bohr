@@ -278,13 +278,13 @@ function drawAtomName(protons, neutrons, pal) {
     const en = element[1] + (neutrons > 0 ? "-" + (protons + neutrons) : "");
     const fa = element[2] + (neutrons > 0 ? "-" + toFaDigits(protons + neutrons) : "");
     ctx.save();
-    ctx.font = 'bold 40px "Vazirmatn", sans-serif';
+    ctx.font = 'bold 32px "Vazirmatn", sans-serif';
     ctx.fillStyle = pal.nameColor;
     ctx.textBaseline = "top";
     ctx.textAlign = "right";
     ctx.direction = "rtl";
     ctx.fillText(fa, canvas.width - 44, 40);
-    ctx.font = 'bold 40px "JetBrains Mono", monospace';
+    ctx.font = 'bold 32px "JetBrains Mono", monospace';
     ctx.textAlign = "left";
     ctx.direction = "ltr";
     ctx.fillText(en, 44, 40);
@@ -338,8 +338,8 @@ function drawAtom(protons, neutrons, electrons, pal) {
 async function render() {
     if (!lastCounts) return;
     if (document.fonts && document.fonts.load) {
-        await document.fonts.load('40px "Vazirmatn"');
-        await document.fonts.load('bold 40px "JetBrains Mono"');
+        await document.fonts.load('32px "Vazirmatn"');
+        await document.fonts.load('bold 32px "JetBrains Mono"');
     }
     drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()]);
     atomUrl = canvas.toDataURL("image/png");
