@@ -544,13 +544,28 @@ body {
 
 .pt-mark {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 1px;
     border: 1px dashed var(--line);
     border-radius: 4px;
     color: var(--muted);
+}
+
+.pt-mark-name {
+    font-family: "Vazirmatn", sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 7px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.pt-mark-range {
     font-family: "JetBrains Mono", monospace;
-    font-size: 8px;
+    font-weight: 400;
+    font-size: 7px;
 }
 
 .pt-mark.lan {

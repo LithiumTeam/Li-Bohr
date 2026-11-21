@@ -599,11 +599,17 @@ function ptNum(row, col, label) {
 function buildPeriodicTable() {
     for (let g = 1; g <= 18; g++) ptNum(1, g + 1, g);
     for (let p = 1; p <= 7; p++) ptNum(p + 1, 1, p);
-    for (const [row, col, label, cls] of [[7, 4, "57-71", "lan"], [8, 4, "89-103", "act"]]) {
+    for (const [row, col, name, range, cls] of [[7, 4, "لانتانیدها", "۵۷-۷۱", "lan"], [8, 4, "اکتینیدها", "۸۹-۱۰۳", "act"]]) {
         const mark = document.createElement("span");
         mark.className = "pt-mark " + cls;
         mark.style.gridArea = row + " / " + col + " / " + (row + 1) + " / " + (col + 1);
-        mark.textContent = label;
+        const nm = document.createElement("i");
+        nm.className = "pt-mark-name";
+        nm.textContent = name;
+        const rg = document.createElement("b");
+        rg.className = "pt-mark-range";
+        rg.textContent = range;
+        mark.append(nm, rg);
         periodicGrid.appendChild(mark);
     }
     for (let z = 1; z <= 118; z++) {
