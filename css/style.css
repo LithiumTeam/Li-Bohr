@@ -554,18 +554,19 @@ body {
 }
 
 .pt-mark-name {
-    font-family: "Vazirmatn", sans-serif;
+    font-family: "JetBrains Mono", monospace;
     font-style: normal;
     font-weight: 700;
-    font-size: 7px;
-    line-height: 1.2;
+    font-size: 6px;
+    line-height: 1.3;
+    letter-spacing: -0.2px;
     white-space: nowrap;
 }
 
 .pt-mark-range {
     font-family: "JetBrains Mono", monospace;
     font-weight: 400;
-    font-size: 7px;
+    font-size: 6px;
 }
 
 .pt-mark.lan {
