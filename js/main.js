@@ -634,6 +634,7 @@ function pickElement(z) {
     document.getElementById("neutrons").value = String(ISOTOPE[z] - z);
     document.getElementById("protons").dispatchEvent(new Event("input"));
     form.requestSubmit();
+    canvas.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function updateActiveCell() {
