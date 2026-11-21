@@ -577,28 +577,55 @@ const ISOTOPE = [
 ];
 
 function ptPosition(z) {
-    if (z === 1) return [1, 1];
-    if (z === 2) return [1, 18];
-    if (z >= 3 && z <= 10) return [2, z - 2];
-    if (z >= 11 && z <= 18) return [3, z - 10];
-    if (z >= 19 && z <= 36) return [4, z - 18];
-    if (z >= 37 && z <= 54) return [5, z - 36];
-    if (z >= 55 && z <= 56) return [6, z - 54];
-    if (z >= 57 && z <= 71) return [9, z - 54];
-    if (z >= 72 && z <= 86) return [6, z - 54];
-    if (z >= 87 && z <= 88) return [7, z - 86];
-    if (z >= 89 && z <= 103) return [10, z - 86];
-    return [7, z - 86];
+    if (z === 1) return [2, 2];
+    if (z === 2) return [2, 19];
+    if (z === 3) return [3, 2];
+    if (z === 4) return [3, 3];
+    if (z >= 5 && z <= 10) return [3, z + 9];
+    if (z === 11) return [4, 2];
+    if (z === 12) return [4, 3];
+    if (z >= 13 && z <= 18) return [4, z + 1];
+    if (z >= 19 && z <= 36) return [5, z - 17];
+    if (z >= 37 && z <= 54) return [6, z - 35];
+    if (z >= 55 && z <= 56) return [7, z - 53];
+    if (z >= 57 && z <= 71) return [10, z - 53];
+    if (z >= 72 && z <= 86) return [7, z - 67];
+    if (z === 87) return [8, 2];
+    if (z === 88) return [8, 3];
+    if (z >= 89 && z <= 103) return [11, z - 85];
+    return [8, z - 99];
+}
+
+function ptCategory(z) {
+    if (z >= 57 && z <= 71) return "pt-c-lan";
+    if (z >= 89 && z <= 103) return "pt-c-act";
+    if (z === 2 || z === 10 || z === 18 || z === 36 || z === 54 || z === 86 || z === 118) return "pt-c-lg";
+    if (z === 9 || z === 17 || z === 35 || z === 53 || z === 85) return "pt-c-ha";
+    if (z === 3 || z === 11 || z === 19 || z === 37 || z === 55 || z === 87) return "pt-c-alk";
+    if (z === 4 || z === 12 || z === 20 || z === 38 || z === 56 || z === 88) return "pt-c-ae";
+    if ((z >= 21 && z <= 30) || (z >= 39 && z <= 48) || (z >= 72 && z <= 80) || (z >= 104 && z <= 112)) return "pt-c-tr";
+    if (z === 1) return "pt-c-h";
+    return "pt-c-p";
 }
 
 const periodicGrid = document.getElementById("periodic-grid");
 const ptCellByZ = {};
 let ptActiveCell = null;
 
+function ptNum(row, col, label) {
+    const el = document.createElement("span");
+    el.className = "pt-num";
+    el.style.gridArea = row + " / " + col + " / " + (row + 1) + " / " + (col + 1);
+    el.textContent = label;
+    periodicGrid.appendChild(el);
+}
+
 function buildPeriodicTable() {
-    for (const [row, col, label] of [[6, 3, "57-71"], [7, 3, "89-103"]]) {
+    for (let g = 1; g <= 18; g++) ptNum(1, g + 1, g);
+    for (let p = 1; p <= 7; p++) ptNum(p + 1, 1, p);
+    for (const [row, col, label, cls] of [[7, 4, "57-71", "lan"], [8, 4, "89-103", "act"]]) {
         const mark = document.createElement("span");
-        mark.className = "pt-mark";
+        mark.className = "pt-mark " + cls;
         mark.style.gridArea = row + " / " + col + " / " + (row + 1) + " / " + (col + 1);
         mark.textContent = label;
         periodicGrid.appendChild(mark);
@@ -608,7 +635,7 @@ function buildPeriodicTable() {
         const el = ELEMENTS[z];
         const cell = document.createElement("button");
         cell.type = "button";
-        cell.className = "pt-cell";
+        cell.className = "pt-cell " + ptCategory(z);
         cell.dataset.z = z;
         cell.style.gridArea = pos[0] + " / " + pos[1] + " / " + (pos[0] + 1) + " / " + (pos[1] + 1);
         cell.title = el[1] + " - " + el[2];
