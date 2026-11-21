@@ -517,14 +517,32 @@ function drawAtom(protons, neutrons, electrons, pal) {
     drawAtomName(protons, neutrons, pal);
 }
 
+function drawEmpty(pal) {
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground(cx, cy, Math.min(cx, cy), pal);
+    ctx.save();
+    ctx.font = 'bold 28px "Vazirmatn", sans-serif';
+    ctx.fillStyle = pal.nameColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.direction = "rtl";
+    ctx.fillText("هیچ مدل بوری اینجا نیست!", cx, cy);
+    ctx.restore();
+}
+
 async function render() {
-    if (!lastCounts) return;
     const seq = ++renderSeq;
     if (document.fonts && document.fonts.load) {
         await document.fonts.load('32px "Vazirmatn"');
         await document.fonts.load('bold 32px "JetBrains Mono"');
     }
     if (seq !== renderSeq) return;
+    if (!lastCounts) {
+        drawEmpty(PALETTES[currentTheme()]);
+        return;
+    }
     drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()]);
     atomUrl = canvas.toDataURL("image/png");
 }
