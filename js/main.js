@@ -559,6 +559,97 @@ function syncInvalidZ() {
 
 document.getElementById("protons").addEventListener("input", syncInvalidZ);
 
+const ISOTOPE = [
+    0,
+    1, 4, 7, 9, 11, 12, 14, 16, 19, 20,
+    23, 24, 27, 28, 31, 32, 35, 40, 39, 40,
+    45, 48, 51, 52, 55, 56, 59, 58, 63, 64,
+    69, 74, 75, 80, 79, 84, 85, 88, 89, 90,
+    93, 98, 97, 102, 103, 106, 107, 114, 115, 120,
+    121, 130, 127, 132, 133, 138, 139, 140, 141, 142,
+    145, 152, 153, 158, 159, 164, 165, 166, 169, 174,
+    175, 178, 181, 184, 187, 192, 193, 195, 197, 202,
+    205, 208, 209,
+    209, 210, 222, 223, 226, 227, 232, 231, 238, 237,
+    244, 243, 247, 247, 251, 252, 257, 258, 259, 266,
+    267, 268, 269, 270, 271, 278, 281, 282, 285,
+    286, 289, 290, 293, 294, 294
+];
+
+function ptPosition(z) {
+    if (z === 1) return [1, 1];
+    if (z === 2) return [1, 18];
+    if (z >= 3 && z <= 10) return [2, z - 2];
+    if (z >= 11 && z <= 18) return [3, z - 10];
+    if (z >= 19 && z <= 36) return [4, z - 18];
+    if (z >= 37 && z <= 54) return [5, z - 36];
+    if (z >= 55 && z <= 56) return [6, z - 54];
+    if (z >= 57 && z <= 71) return [9, z - 54];
+    if (z >= 72 && z <= 86) return [6, z - 54];
+    if (z >= 87 && z <= 88) return [7, z - 86];
+    if (z >= 89 && z <= 103) return [10, z - 86];
+    return [7, z - 86];
+}
+
+const periodicGrid = document.getElementById("periodic-grid");
+const ptCellByZ = {};
+let ptActiveCell = null;
+
+function buildPeriodicTable() {
+    for (const [row, col, label] of [[6, 3, "57-71"], [7, 3, "89-103"]]) {
+        const mark = document.createElement("span");
+        mark.className = "pt-mark";
+        mark.style.gridArea = row + " / " + col + " / " + (row + 1) + " / " + (col + 1);
+        mark.textContent = label;
+        periodicGrid.appendChild(mark);
+    }
+    for (let z = 1; z <= 118; z++) {
+        const pos = ptPosition(z);
+        const el = ELEMENTS[z];
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "pt-cell";
+        cell.dataset.z = z;
+        cell.style.gridArea = pos[0] + " / " + pos[1] + " / " + (pos[0] + 1) + " / " + (pos[1] + 1);
+        cell.title = el[1] + " - " + el[2];
+        const zEl = document.createElement("span");
+        zEl.className = "pt-z";
+        zEl.textContent = z;
+        const symEl = document.createElement("span");
+        symEl.className = "pt-sym";
+        symEl.textContent = el[0];
+        const nameEl = document.createElement("span");
+        nameEl.className = "pt-name";
+        nameEl.textContent = el[2];
+        cell.appendChild(zEl);
+        cell.appendChild(symEl);
+        cell.appendChild(nameEl);
+        cell.addEventListener("click", () => pickElement(z));
+        ptCellByZ[z] = cell;
+        periodicGrid.appendChild(cell);
+    }
+}
+
+function pickElement(z) {
+    document.getElementById("protons").value = String(z);
+    document.getElementById("electrons").value = String(z);
+    document.getElementById("neutrons").value = String(ISOTOPE[z] - z);
+    document.getElementById("protons").dispatchEvent(new Event("input"));
+    form.requestSubmit();
+}
+
+function updateActiveCell() {
+    const z = parseCount(document.getElementById("protons").value);
+    const next = z >= 1 && z <= 118 ? ptCellByZ[z] : null;
+    if (next === ptActiveCell) return;
+    if (ptActiveCell) ptActiveCell.classList.remove("active");
+    ptActiveCell = next;
+    if (ptActiveCell) ptActiveCell.classList.add("active");
+}
+
+buildPeriodicTable();
+document.getElementById("protons").addEventListener("input", updateActiveCell);
+
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const neutrons = parseCount(document.getElementById("neutrons").value);
