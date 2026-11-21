@@ -530,23 +530,19 @@ async function render() {
 }
 
 function parseCount(value) {
-    let v = String(value).trim().toLowerCase();
-    if (!v) return 0;
-    let multiplier = 1;
-    if (v.endsWith("k")) {
-        multiplier = 1000;
-        v = v.slice(0, -1).trim();
-    }
-    const n = parseInt(v, 10);
+    const n = parseInt(String(value).trim(), 10);
     if (Number.isNaN(n)) return 0;
-    return Math.max(0, n * multiplier);
+    return Math.max(0, n);
 }
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
     const neutrons = parseCount(document.getElementById("neutrons").value);
-    const protons = parseCount(document.getElementById("protons").value);
     const electrons = parseCount(document.getElementById("electrons").value);
+    let protons = parseCount(document.getElementById("protons").value);
+    if (protons === 0 && electrons >= 1 && electrons <= 118) {
+        protons = electrons;
+    }
 
     if (Math.max(protons, neutrons, electrons) > BIG_LIMIT) {
         pendingCounts = { protons, neutrons, electrons };
