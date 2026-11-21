@@ -564,11 +564,13 @@ function ptPosition(z) {
     if (z >= 19 && z <= 36) return [5, z - 17];
     if (z >= 37 && z <= 54) return [6, z - 35];
     if (z >= 55 && z <= 56) return [7, z - 53];
-    if (z >= 57 && z <= 71) return [10, z - 53];
+    if (z === 57) return [7, 4];
+    if (z >= 58 && z <= 71) return [10, z - 53];
     if (z >= 72 && z <= 86) return [7, z - 67];
     if (z === 87) return [8, 2];
     if (z === 88) return [8, 3];
-    if (z >= 89 && z <= 103) return [11, z - 85];
+    if (z === 89) return [8, 4];
+    if (z >= 90 && z <= 103) return [11, z - 85];
     return [8, z - 99];
 }
 
@@ -599,19 +601,6 @@ function ptNum(row, col, label) {
 function buildPeriodicTable() {
     for (let g = 1; g <= 18; g++) ptNum(1, g + 1, g);
     for (let p = 1; p <= 7; p++) ptNum(p + 1, 1, p);
-    for (const [row, col, name, range, cls] of [[7, 4, "Lanthanides", "57-71", "lan"], [8, 4, "Actinides", "89-103", "act"]]) {
-        const mark = document.createElement("span");
-        mark.className = "pt-mark " + cls;
-        mark.style.gridArea = row + " / " + col + " / " + (row + 1) + " / " + (col + 1);
-        const nm = document.createElement("i");
-        nm.className = "pt-mark-name";
-        nm.textContent = name;
-        const rg = document.createElement("b");
-        rg.className = "pt-mark-range";
-        rg.textContent = range;
-        mark.append(nm, rg);
-        periodicGrid.appendChild(mark);
-    }
     for (let z = 1; z <= 118; z++) {
         const pos = ptPosition(z);
         const el = ELEMENTS[z];

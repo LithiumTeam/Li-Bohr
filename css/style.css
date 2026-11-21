@@ -541,38 +541,3 @@ body {
 .pt-cell.active .pt-sym {
     color: #ffffff;
 }
-
-.pt-mark {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1px;
-    border: 1px dashed var(--line);
-    border-radius: 4px;
-    color: var(--muted);
-}
-
-.pt-mark-name {
-    font-family: "JetBrains Mono", monospace;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 6px;
-    line-height: 1.3;
-    letter-spacing: -0.2px;
-    white-space: nowrap;
-}
-
-.pt-mark-range {
-    font-family: "JetBrains Mono", monospace;
-    font-weight: 400;
-    font-size: 6px;
-}
-
-.pt-mark.lan {
-    background: var(--pt-lan);
-}
-
-.pt-mark.act {
-    background: var(--pt-act);
-}
