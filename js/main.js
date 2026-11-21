@@ -529,11 +529,24 @@ async function render() {
     atomUrl = canvas.toDataURL("image/png");
 }
 
+function parseCount(value) {
+    let v = String(value).trim().toLowerCase();
+    if (!v) return 0;
+    let multiplier = 1;
+    if (v.endsWith("k")) {
+        multiplier = 1000;
+        v = v.slice(0, -1).trim();
+    }
+    const n = parseInt(v, 10);
+    if (Number.isNaN(n)) return 0;
+    return Math.max(0, n * multiplier);
+}
+
 form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const neutrons = Math.max(0, parseInt(document.getElementById("neutrons").value, 10) || 0);
-    const protons = Math.max(0, parseInt(document.getElementById("protons").value, 10) || 0);
-    const electrons = Math.max(0, parseInt(document.getElementById("electrons").value, 10) || 0);
+    const neutrons = parseCount(document.getElementById("neutrons").value);
+    const protons = parseCount(document.getElementById("protons").value);
+    const electrons = parseCount(document.getElementById("electrons").value);
 
     if (Math.max(protons, neutrons, electrons) > BIG_LIMIT) {
         pendingCounts = { protons, neutrons, electrons };
