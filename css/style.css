@@ -368,6 +368,7 @@ body {
 }
 
 .stage {
+    position: relative;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid var(--line);
@@ -378,6 +379,36 @@ body {
     display: block;
     width: 100%;
     height: auto;
+}
+
+.stage-error {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    padding: 24px;
+    background: var(--card);
+}
+
+.stage-error[hidden] {
+    display: none;
+}
+
+.stage-error .bi {
+    color: var(--warn);
+    font-size: 30px;
+}
+
+.stage-error p {
+    margin: 0;
+    max-width: 420px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.9;
 }
 
 .caption {
