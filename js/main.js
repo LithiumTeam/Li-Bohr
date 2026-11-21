@@ -7,8 +7,6 @@ const themeToggle = document.getElementById("theme-toggle");
 const bigWarn = document.getElementById("big-warn");
 const bigWarnYes = document.getElementById("big-warn-yes");
 const bigWarnNo = document.getElementById("big-warn-no");
-const generateBtn = document.getElementById("generate-btn");
-const stageError = document.getElementById("stage-error");
 let atomUrl = null;
 let lastCounts = null;
 let pendingCounts = null;
@@ -537,28 +535,6 @@ function parseCount(value) {
     return Math.max(0, n);
 }
 
-function drawBlank() {
-    renderSeq++;
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBackground(cx, cy, Math.min(cx, cy), PALETTES[currentTheme()]);
-    atomUrl = null;
-    downloadBtn.disabled = true;
-}
-
-function syncInvalidZ() {
-    const invalid = parseCount(document.getElementById("protons").value) === 0;
-    stageError.hidden = !invalid;
-    generateBtn.disabled = invalid;
-    if (invalid) {
-        drawBlank();
-        captionText.textContent = "عدد اتمی نامعتبر است؛ تعداد پروتون باید ۱ یا بیشتر باشد.";
-    }
-}
-
-document.getElementById("protons").addEventListener("input", syncInvalidZ);
-
 const ISOTOPE = [
     0,
     1, 4, 7, 9, 11, 12, 14, 16, 19, 20,
@@ -683,11 +659,6 @@ form.addEventListener("submit", (e) => {
     const electrons = parseCount(document.getElementById("electrons").value);
     const protons = parseCount(document.getElementById("protons").value);
 
-    if (protons === 0) {
-        syncInvalidZ();
-        return;
-    }
-
     if (Math.max(protons, neutrons, electrons) > BIG_LIMIT) {
         pendingCounts = { protons, neutrons, electrons };
         bigWarn.hidden = false;
@@ -719,10 +690,6 @@ themeToggle.addEventListener("click", () => {
     const next = currentTheme() === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     localStorage.setItem("li-bohr-theme", next);
-    if (parseCount(document.getElementById("protons").value) === 0) {
-        drawBlank();
-        return;
-    }
     render();
 });
 
@@ -734,5 +701,4 @@ downloadBtn.addEventListener("click", () => {
     link.click();
 });
 
-syncInvalidZ();
 render();
