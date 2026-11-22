@@ -823,8 +823,23 @@ const FAMILY_REACTIVITY = {
 
 const REACTIVITY_FA = { 6: "کم", 7: "کم", 8: "بسیار زیاد", 47: "کم", 78: "کم", 79: "کم" };
 
-function noStableIsotope(z) {
-    return z === 43 || z === 61 || z >= 84;
+function elementPeriodGroup(z) {
+    let period, group;
+    if (z === 1) { period = 1; group = 1; }
+    else if (z === 2) { period = 1; group = 18; }
+    else if (z <= 10) { period = 2; group = z + 8; }
+    else if (z <= 18) { period = 3; group = z; }
+    else if (z <= 36) { period = 4; group = z - 18; }
+    else if (z <= 54) { period = 5; group = z - 36; }
+    else if (z <= 56) { period = 6; group = z - 54; }
+    else if (z === 57) { period = 6; group = 3; }
+    else if (z <= 71) { period = 6; group = "f"; }
+    else if (z <= 86) { period = 6; group = z - 68; }
+    else if (z <= 88) { period = 7; group = z - 86; }
+    else if (z === 89) { period = 7; group = 3; }
+    else if (z <= 103) { period = 7; group = "f"; }
+    else { period = 7; group = z - 100; }
+    return period + ", " + group;
 }
 
 function elementFamilyLabel(z) {
@@ -848,7 +863,7 @@ const ptInfoEn = document.getElementById("pt-info-en");
 const ptInfoCat = document.getElementById("pt-info-cat");
 const ptInfoShells = document.getElementById("pt-info-shells");
 const ptInfoReac = document.getElementById("pt-info-reac");
-const ptInfoStable = document.getElementById("pt-info-stable");
+const ptInfoPg = document.getElementById("pt-info-pg");
 const ptInfoState = document.getElementById("pt-info-state");
 const ptInfoUses = document.getElementById("pt-info-uses");
 
@@ -866,7 +881,7 @@ function updateInfoPanel(z) {
     ptInfoState.textContent = elementState(z);
     ptInfoShells.textContent = NEUTRAL_SHELLS[z].join(", ");
     ptInfoReac.textContent = elementReactivity(z);
-    ptInfoStable.textContent = noStableIsotope(z) ? "ندارد (رادیواکتیو)" : "دارد";
+    ptInfoPg.textContent = elementPeriodGroup(z);
     ptInfoUses.textContent = USES_FA[z] || "";
     ptInfo.hidden = false;
 }
