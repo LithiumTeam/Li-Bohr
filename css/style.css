@@ -456,7 +456,7 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
-    transition: background 0.12s, border-color 0.12s, transform 0.06s;
+    transition: background 0.12s, border-color 0.12s, transform 0.06s, opacity 0.15s;
 }
 
 .pt-cell:hover {
@@ -540,4 +540,96 @@ body {
 
 .pt-cell.active .pt-sym {
     color: #ffffff;
+}
+
+.pt-cell.pt-dim {
+    opacity: 0.18;
+}
+
+.pt-info {
+    border: 1px solid var(--line);
+    background: var(--accent-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+}
+
+.pt-info-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.pt-info-z {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.pt-info-name {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.pt-info-en {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--muted);
+    direction: ltr;
+}
+
+.pt-info-rows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.pt-info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+}
+
+.pt-info-row .lbl {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.pt-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.pt-search .bi {
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.pt-search input {
+    flex: 1;
+    padding: 9px 12px;
+    font: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pt-search input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.pt-search-count {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 74px;
+    text-align: left;
 }

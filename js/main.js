@@ -662,7 +662,137 @@ function updateActiveCell() {
     if (ptActiveCell) ptActiveCell.classList.remove("active");
     ptActiveCell = next;
     if (ptActiveCell) ptActiveCell.classList.add("active");
+    updateInfoPanel(next ? z : null);
 }
+
+const PT_FAMILY_FA = {
+    "pt-c-alk": "فلز آلکالین",
+    "pt-c-ae": "فلز آلکالین‌خاکی",
+    "pt-c-tr": "فلز ترنزی",
+    "pt-c-lan": "لانتانید",
+    "pt-c-act": "اکتینید",
+    "pt-c-ha": "هالوژن",
+    "pt-c-lg": "گاز نجیب",
+    "pt-c-h": "غیرفلز"
+};
+
+const METALLOID_Z = { 5: 1, 14: 1, 32: 1, 33: 1, 51: 1, 52: 1 };
+const NONMETAL_Z = { 1: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 15: 1, 16: 1, 17: 1, 18: 1, 34: 1, 35: 1, 36: 1, 53: 1, 54: 1, 85: 1, 86: 1, 118: 1 };
+
+const FAMILY_REACTIVITY = {
+    "pt-c-alk": "بسیار زیاد",
+    "pt-c-ae": "زیاد",
+    "pt-c-tr": "متوسط",
+    "pt-c-lan": "زیاد",
+    "pt-c-act": "زیاد",
+    "pt-c-ha": "بسیار زیاد",
+    "pt-c-lg": "بسیار کم",
+    "pt-c-h": "زیاد"
+};
+
+const REACTIVITY_FA = { 6: "کم", 7: "کم", 8: "بسیار زیاد", 47: "کم", 78: "کم", 79: "کم" };
+
+function noStableIsotope(z) {
+    return z === 43 || z === 61 || z >= 84;
+}
+
+function elementFamilyLabel(z) {
+    const cat = ptCategory(z);
+    if (cat !== "pt-c-p") return PT_FAMILY_FA[cat];
+    if (METALLOID_Z[z]) return "نیم‌فلز";
+    if (NONMETAL_Z[z]) return "غیرفلز";
+    return "فلز";
+}
+
+function elementReactivity(z) {
+    if (REACTIVITY_FA[z]) return REACTIVITY_FA[z];
+    if (ptCategory(z) === "pt-c-p") return "متوسط";
+    return FAMILY_REACTIVITY[ptCategory(z)];
+}
+
+const ptInfo = document.getElementById("pt-info");
+const ptInfoZ = document.getElementById("pt-info-z");
+const ptInfoName = document.getElementById("pt-info-name");
+const ptInfoEn = document.getElementById("pt-info-en");
+const ptInfoCat = document.getElementById("pt-info-cat");
+const ptInfoIso = document.getElementById("pt-info-iso");
+const ptInfoShells = document.getElementById("pt-info-shells");
+const ptInfoReac = document.getElementById("pt-info-reac");
+const ptInfoStable = document.getElementById("pt-info-stable");
+
+function updateInfoPanel(z) {
+    if (!z || !ELEMENTS[z]) {
+        ptInfo.hidden = true;
+        return;
+    }
+    const el = ELEMENTS[z];
+    ptInfoZ.textContent = toFaDigits(z);
+    ptInfoName.textContent = el[2];
+    ptInfoEn.textContent = el[1] + " (" + el[0] + ")";
+    ptInfoCat.textContent = elementFamilyLabel(z);
+    ptInfoIso.textContent = el[2] + "-" + toFaDigits(ISOTOPE[z]);
+    ptInfoShells.textContent = NEUTRAL_SHELLS[z].map(toFaDigits).join("، ");
+    ptInfoReac.textContent = elementReactivity(z);
+    ptInfoStable.textContent = noStableIsotope(z) ? "ندارد (رادیواکتیو)" : "دارد";
+    ptInfo.hidden = false;
+}
+
+const ptSearch = document.getElementById("pt-search");
+const ptSearchCount = document.getElementById("pt-search-count");
+
+function ptSearchMatches(raw) {
+    const q = raw.trim();
+    if (!q) return null;
+    const digits = q.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+    const isDigits = /^\d+$/.test(digits);
+    const qn = q.toLowerCase();
+    const out = [];
+    for (let z = 1; z <= 118; z++) {
+        if (isDigits) {
+            if (Number(digits) === z) out.push(z);
+            continue;
+        }
+        const el = ELEMENTS[z];
+        if (el[1].toLowerCase().indexOf(qn) !== -1 || el[2].indexOf(q) !== -1 || el[0].toLowerCase() === qn) out.push(z);
+    }
+    return out;
+}
+
+function applyPtSearch() {
+    for (let z = 1; z <= 118; z++) ptCellByZ[z].classList.remove("pt-dim");
+    const q = ptSearch.value;
+    if (q.trim() === "") {
+        ptSearchCount.textContent = "";
+        return;
+    }
+    const matches = ptSearchMatches(q);
+    if (matches.length === 0) {
+        for (let z = 1; z <= 118; z++) ptCellByZ[z].classList.add("pt-dim");
+        ptSearchCount.textContent = "یافت نشد";
+        return;
+    }
+    const hit = new Set(matches);
+    for (let z = 1; z <= 118; z++) {
+        if (!hit.has(z)) ptCellByZ[z].classList.add("pt-dim");
+    }
+    ptSearchCount.textContent = toFaDigits(matches.length) + " عنصر";
+}
+
+ptSearch.addEventListener("input", applyPtSearch);
+ptSearch.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        ptSearch.value = "";
+        applyPtSearch();
+    }
+    if (e.key === "Enter") {
+        const matches = ptSearchMatches(ptSearch.value);
+        if (matches && matches.length > 0) {
+            ptSearch.value = "";
+            applyPtSearch();
+            pickElement(matches[0]);
+        }
+    }
+});
 
 buildPeriodicTable();
 document.getElementById("protons").addEventListener("input", updateActiveCell);
