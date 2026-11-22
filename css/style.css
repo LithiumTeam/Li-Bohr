@@ -41,6 +41,7 @@
     --pt-lg: #eae5fb;
     --pt-lan: #fdf6d9;
     --pt-act: #fbe3d3;
+    --pt-tile: #6d28d9;
 }
 
 [data-theme="dark"] {
@@ -69,6 +70,7 @@
     --pt-lg: rgba(167, 139, 250, 0.16);
     --pt-lan: rgba(253, 224, 71, 0.14);
     --pt-act: rgba(251, 146, 60, 0.15);
+    --pt-tile: #7c3aed;
 }
 
 * {
@@ -551,7 +553,6 @@ body {
     border-radius: 14px;
     padding: 16px 18px;
     margin-bottom: 14px;
-    box-shadow: 0 10px 24px var(--accent-soft);
 }
 
 .pt-info-head {
@@ -565,7 +566,7 @@ body {
     font-size: 14px;
     font-weight: 700;
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--pt-tile);
     border-radius: 8px;
     padding: 5px 0;
     min-width: 46px;
@@ -581,7 +582,7 @@ body {
 .pt-info-en {
     font-family: "JetBrains Mono", monospace;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
+    color: #e8e2f8;
     direction: ltr;
 }
 
@@ -595,15 +596,14 @@ body {
     display: flex;
     flex-direction: column;
     gap: 3px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: var(--pt-tile);
     border-radius: 10px;
     padding: 8px 10px;
 }
 
 .pt-info-row .lbl {
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.7);
+    color: #e8e2f8;
 }
 
 .pt-info-row > :not(.lbl) {
@@ -616,8 +616,7 @@ body {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: var(--pt-tile);
     border-radius: 10px;
     padding: 8px 12px;
     margin-top: 8px;
@@ -625,7 +624,7 @@ body {
 
 .pt-info-uses .lbl {
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.7);
+    color: #e8e2f8;
     white-space: nowrap;
 }
 
