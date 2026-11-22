@@ -744,16 +744,24 @@ function ptSearchMatches(raw) {
     const q = raw.trim();
     if (!q) return null;
     const digits = q.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
-    const isDigits = /^\d+$/.test(digits);
+    if (/^\d+$/.test(digits)) {
+        const z = Number(digits);
+        return z >= 1 && z <= 118 ? [z] : [];
+    }
     const qn = q.toLowerCase();
     const out = [];
     for (let z = 1; z <= 118; z++) {
-        if (isDigits) {
-            if (Number(digits) === z) out.push(z);
-            continue;
-        }
+        if (ELEMENTS[z][0].toLowerCase() === qn) out.push(z);
+    }
+    if (out.length > 0) return out;
+    for (let z = 1; z <= 118; z++) {
         const el = ELEMENTS[z];
-        if (el[1].toLowerCase().indexOf(qn) !== -1 || el[2].indexOf(q) !== -1 || el[0].toLowerCase() === qn) out.push(z);
+        if (el[1].toLowerCase().startsWith(qn) || el[2].startsWith(q)) out.push(z);
+    }
+    if (out.length > 0) return out;
+    for (let z = 1; z <= 118; z++) {
+        const el = ELEMENTS[z];
+        if (el[1].toLowerCase().indexOf(qn) !== -1 || el[2].indexOf(q) !== -1) out.push(z);
     }
     return out;
 }
