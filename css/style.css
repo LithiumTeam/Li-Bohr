@@ -637,29 +637,32 @@ body {
 .pt-search {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 14px;
+    padding: 8px 14px;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pt-search:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .pt-search .bi {
-    color: var(--muted);
-    font-size: 15px;
+    color: var(--accent);
+    font-size: 16px;
+    flex: 0 0 auto;
 }
 
 .pt-search input {
     flex: 1;
-    padding: 9px 12px;
     font: inherit;
     font-size: 13px;
     color: var(--ink);
     background: transparent;
-    border: 1px solid var(--line);
-    border-radius: 10px;
+    border: none;
     outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.pt-search input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px var(--accent-soft);
 }
