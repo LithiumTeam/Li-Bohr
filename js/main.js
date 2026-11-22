@@ -678,6 +678,15 @@ const PT_FAMILY_FA = {
 
 const METALLOID_Z = { 5: 1, 14: 1, 32: 1, 33: 1, 51: 1, 52: 1 };
 const NONMETAL_Z = { 1: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 15: 1, 16: 1, 17: 1, 18: 1, 34: 1, 35: 1, 36: 1, 53: 1, 54: 1, 85: 1, 86: 1, 118: 1 };
+const GAS_Z = { 1: 1, 2: 1, 7: 1, 8: 1, 9: 1, 10: 1, 17: 1, 18: 1, 36: 1, 54: 1, 86: 1 };
+const LIQUID_Z = { 35: 1, 80: 1 };
+
+function elementState(z) {
+    if (GAS_Z[z]) return "گاز";
+    if (LIQUID_Z[z]) return "مایع";
+    if (z === 118) return "نامشخص";
+    return "جامد";
+}
 
 const FAMILY_REACTIVITY = {
     "pt-c-alk": "بسیار زیاد",
@@ -715,10 +724,10 @@ const ptInfoZ = document.getElementById("pt-info-z");
 const ptInfoName = document.getElementById("pt-info-name");
 const ptInfoEn = document.getElementById("pt-info-en");
 const ptInfoCat = document.getElementById("pt-info-cat");
-const ptInfoIso = document.getElementById("pt-info-iso");
 const ptInfoShells = document.getElementById("pt-info-shells");
 const ptInfoReac = document.getElementById("pt-info-reac");
 const ptInfoStable = document.getElementById("pt-info-stable");
+const ptInfoState = document.getElementById("pt-info-state");
 
 function updateInfoPanel(z) {
     if (!z || !ELEMENTS[z]) {
@@ -730,7 +739,7 @@ function updateInfoPanel(z) {
     ptInfoName.textContent = el[2];
     ptInfoEn.textContent = el[1] + " (" + el[0] + ")";
     ptInfoCat.textContent = elementFamilyLabel(z);
-    ptInfoIso.textContent = el[2] + "-" + toFaDigits(ISOTOPE[z]);
+    ptInfoState.textContent = elementState(z);
     ptInfoShells.textContent = NEUTRAL_SHELLS[z].map(toFaDigits).join("، ");
     ptInfoReac.textContent = elementReactivity(z);
     ptInfoStable.textContent = noStableIsotope(z) ? "ندارد (رادیواکتیو)" : "دارد";
