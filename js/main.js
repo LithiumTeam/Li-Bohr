@@ -738,7 +738,6 @@ function updateInfoPanel(z) {
 }
 
 const ptSearch = document.getElementById("pt-search");
-const ptSearchCount = document.getElementById("pt-search-count");
 
 function ptSearchMatches(raw) {
     const q = raw.trim();
@@ -769,21 +768,16 @@ function ptSearchMatches(raw) {
 function applyPtSearch() {
     for (let z = 1; z <= 118; z++) ptCellByZ[z].classList.remove("pt-dim");
     const q = ptSearch.value;
-    if (q.trim() === "") {
-        ptSearchCount.textContent = "";
-        return;
-    }
+    if (q.trim() === "") return;
     const matches = ptSearchMatches(q);
     if (matches.length === 0) {
         for (let z = 1; z <= 118; z++) ptCellByZ[z].classList.add("pt-dim");
-        ptSearchCount.textContent = "یافت نشد";
         return;
     }
     const hit = new Set(matches);
     for (let z = 1; z <= 118; z++) {
         if (!hit.has(z)) ptCellByZ[z].classList.add("pt-dim");
     }
-    ptSearchCount.textContent = toFaDigits(matches.length) + " عنصر";
 }
 
 ptSearch.addEventListener("input", applyPtSearch);

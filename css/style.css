@@ -626,10 +626,3 @@ body {
     border-color: var(--accent);
     box-shadow: 0 0 0 4px var(--accent-soft);
 }
-
-.pt-search-count {
-    font-size: 12px;
-    color: var(--muted);
-    min-width: 74px;
-    text-align: left;
-}
