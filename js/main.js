@@ -864,7 +864,7 @@ function updateInfoPanel(z) {
     ptInfoEn.textContent = el[1] + " (" + el[0] + ")";
     ptInfoCat.textContent = elementFamilyLabel(z);
     ptInfoState.textContent = elementState(z);
-    ptInfoShells.textContent = NEUTRAL_SHELLS[z].map(toFaDigits).join("، ");
+    ptInfoShells.textContent = NEUTRAL_SHELLS[z].join(", ");
     ptInfoReac.textContent = elementReactivity(z);
     ptInfoStable.textContent = noStableIsotope(z) ? "ندارد (رادیواکتیو)" : "دارد";
     ptInfoUses.textContent = USES_FA[z] || "";
