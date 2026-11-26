@@ -1048,7 +1048,7 @@ form.addEventListener("submit", (e) => {
 function applyCounts(protons, neutrons, electrons, named) {
     bigWarn.hidden = true;
     pendingCounts = null;
-    if (named && STABLE_E.indexOf(electrons) === -1) {
+    if (named && protons > 118 && STABLE_E.indexOf(electrons) === -1) {
         showChemWarn("info", "تعداد الکترون‌ها با آرایش پایدار لایه‌ها مطابقت ندارد");
     } else if (named) {
         hideChemWarn();
@@ -1084,5 +1084,4 @@ downloadBtn.addEventListener("click", () => {
     link.click();
 });
 
-syncProtonValidity();
 render();
