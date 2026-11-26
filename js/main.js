@@ -1004,8 +1004,8 @@ document.getElementById("protons").addEventListener("input", () => {
 });
 
 function showChemWarn(kind, text) {
-    chemWarn.className = "chem-warn" + (kind === "error" ? " chem-warn--error" : kind === "info" ? " chem-warn--info" : "");
-    chemWarnIcon.className = "bi " + (kind === "error" ? "bi-x-octagon" : kind === "info" ? "bi-info-circle" : "bi-exclamation-triangle");
+    chemWarn.className = "chem-warn" + (kind === "error" ? " chem-warn--error" : " chem-warn--info");
+    chemWarnIcon.className = "bi " + (kind === "error" ? "bi-x-octagon" : "bi-info-circle");
     chemWarnText.textContent = text;
     chemWarn.hidden = false;
 }
@@ -1036,7 +1036,6 @@ form.addEventListener("submit", (e) => {
         return;
     }
     const named = protons > 118 || (electrons >= ION_MIN_E[protons] && electrons <= ION_MAX_E[protons]);
-    if (!named) showChemWarn("warn", "این یون در طبیعت پایدار نیست");
     if (Math.max(protons, neutrons, electrons) > BIG_LIMIT) {
         pendingCounts = { protons, neutrons, electrons, named };
         bigWarn.hidden = false;
@@ -1050,7 +1049,7 @@ function applyCounts(protons, neutrons, electrons, named) {
     pendingCounts = null;
     if (named && protons > 118 && STABLE_E.indexOf(electrons) === -1) {
         showChemWarn("info", "تعداد الکترون‌ها با آرایش پایدار لایه‌ها مطابقت ندارد");
-    } else if (named) {
+    } else {
         hideChemWarn();
     }
     lastCounts = { protons, neutrons, electrons, named: named !== false };

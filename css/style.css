@@ -387,8 +387,7 @@ body {
 .chem-warn {
     margin-top: 12px;
     padding: 12px 14px;
-    border: 1px solid var(--warn-line);
-    background: var(--warn-soft);
+    border: 1px solid var(--line);
     border-radius: 12px;
 }
 
@@ -399,13 +398,11 @@ body {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.7;
-    color: var(--warn);
 }
 
 .chem-warn-text .bi {
     font-size: 16px;
     margin-top: 2px;
-    color: var(--warn);
     flex-shrink: 0;
 }
 
