@@ -866,11 +866,15 @@ const ptInfoReac = document.getElementById("pt-info-reac");
 const ptInfoPg = document.getElementById("pt-info-pg");
 const ptInfoState = document.getElementById("pt-info-state");
 const ptInfoUses = document.getElementById("pt-info-uses");
+const ptInfoImg = document.getElementById("pt-info-img");
+const USES_IMG_Z = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118];
+
 
 function updateInfoPanel(z) {
     if (!z || !ELEMENTS[z]) {
         ptInfo.hidden = true;
         ptInfoUses.textContent = "";
+        ptInfoImg.hidden = true;
         return;
     }
     const el = ELEMENTS[z];
@@ -883,6 +887,14 @@ function updateInfoPanel(z) {
     ptInfoReac.textContent = elementReactivity(z);
     ptInfoPg.textContent = elementPeriodGroup(z);
     ptInfoUses.textContent = USES_FA[z] || "";
+    if (USES_IMG_Z.indexOf(z) !== -1) {
+        ptInfoImg.src = "atom-img/" + z + ".jpg";
+        ptInfoImg.alt = el[1];
+        ptInfoImg.hidden = false;
+    } else {
+        ptInfoImg.hidden = true;
+        ptInfoImg.removeAttribute("src");
+    }
     ptInfo.hidden = false;
 }
 
