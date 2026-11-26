@@ -7,6 +7,10 @@ const themeToggle = document.getElementById("theme-toggle");
 const bigWarn = document.getElementById("big-warn");
 const bigWarnYes = document.getElementById("big-warn-yes");
 const bigWarnNo = document.getElementById("big-warn-no");
+const generateBtn = document.getElementById("generate-btn");
+const chemWarn = document.getElementById("chem-warn");
+const chemWarnIcon = document.getElementById("chem-warn-icon");
+const chemWarnText = document.getElementById("chem-warn-text");
 let atomUrl = null;
 let lastCounts = null;
 let pendingCounts = null;
@@ -17,6 +21,42 @@ const GOLDEN = 2.399963;
 const STAR_SEED = 1337;
 const BIG_LIMIT = 1000;
 const FA_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+
+const ION_MIN_E = [
+    0, 0, 1, 2, 2, 2, 2, 2, 6,
+    8, 9, 10, 10, 10, 10, 10, 10, 10,
+    17, 18, 18, 18, 18, 18, 18, 18, 20,
+    23, 24, 26, 28, 28, 28, 28, 28, 28,
+    35, 36, 36, 36, 36, 36, 36, 36, 36,
+    41, 42, 45, 46, 46, 46, 46, 46, 46,
+    48, 54, 54, 54, 54, 56, 57, 58, 59,
+    60, 61, 61, 63, 64, 65, 66, 67, 68,
+    68, 68, 67, 68, 68, 70, 72, 72, 78,
+    78, 78, 78, 78, 78, 82, 86, 86, 86,
+    86, 86, 86, 88, 88, 90, 92, 93, 94,
+    95, 97, 98, 99, 100, 100, 101, 102, 103,
+    104, 105, 106, 109, 110, 110, 110, 112, 112,
+    116, 116
+];
+
+const ION_MAX_E = [
+    0, 2, 2, 4, 4, 8, 10, 10, 10,
+    10, 11, 12, 12, 13, 18, 18, 18, 18,
+    19, 20, 20, 21, 22, 23, 24, 25, 28,
+    27, 28, 29, 30, 31, 36, 36, 36, 36,
+    37, 38, 38, 39, 40, 41, 42, 43, 46,
+    46, 46, 47, 48, 49, 54, 54, 54, 54,
+    55, 56, 56, 57, 58, 59, 60, 61, 62,
+    63, 64, 65, 66, 67, 68, 69, 70, 71,
+    72, 73, 74, 75, 76, 77, 78, 79, 80,
+    81, 86, 86, 86, 86, 87, 88, 88, 89,
+    90, 91, 92, 93, 94, 95, 96, 97, 98,
+    99, 100, 101, 102, 103, 104, 105, 106, 107,
+    108, 109, 110, 112, 112, 113, 114, 115, 116,
+    118, 118
+];
+
+const STABLE_E = [2, 10, 28, 60, 110, 182, 280, 408];
 
 const ELEMENTS = [
     null,
@@ -475,7 +515,7 @@ function drawAtomName(protons, neutrons, pal) {
     ctx.restore();
 }
 
-function drawAtom(protons, neutrons, electrons, pal) {
+function drawAtom(protons, neutrons, electrons, pal, named) {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
     const half = Math.min(cx, cy);
@@ -514,7 +554,7 @@ function drawAtom(protons, neutrons, electrons, pal) {
         }
     }
 
-    drawAtomName(protons, neutrons, pal);
+    if (named !== false) drawAtomName(protons, neutrons, pal);
 }
 
 function drawEmpty(pal) {
@@ -543,7 +583,7 @@ async function render() {
         drawEmpty(PALETTES[currentTheme()]);
         return;
     }
-    drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()]);
+    drawAtom(lastCounts.protons, lastCounts.neutrons, lastCounts.electrons, PALETTES[currentTheme()], lastCounts.named);
     atomUrl = canvas.toDataURL("image/png");
 }
 
@@ -958,7 +998,31 @@ ptSearch.addEventListener("keydown", (e) => {
 });
 
 buildPeriodicTable();
-document.getElementById("protons").addEventListener("input", updateActiveCell);
+document.getElementById("protons").addEventListener("input", () => {
+    updateActiveCell();
+    syncProtonValidity();
+});
+
+function showChemWarn(kind, text) {
+    chemWarn.className = "chem-warn" + (kind === "error" ? " chem-warn--error" : kind === "info" ? " chem-warn--info" : "");
+    chemWarnIcon.className = "bi " + (kind === "error" ? "bi-x-octagon" : kind === "info" ? "bi-info-circle" : "bi-exclamation-triangle");
+    chemWarnText.textContent = text;
+    chemWarn.hidden = false;
+}
+
+function hideChemWarn() {
+    chemWarn.hidden = true;
+}
+
+function syncProtonValidity() {
+    const p = parseCount(document.getElementById("protons").value);
+    generateBtn.disabled = p < 1;
+    if (p < 1) {
+        showChemWarn("error", "عدد اتمی نامعتبر است");
+        return;
+    }
+    hideChemWarn();
+}
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -966,18 +1030,30 @@ form.addEventListener("submit", (e) => {
     const electrons = parseCount(document.getElementById("electrons").value);
     const protons = parseCount(document.getElementById("protons").value);
 
+    if (protons < 1) {
+        showChemWarn("error", "عدد اتمی نامعتبر است");
+        generateBtn.disabled = true;
+        return;
+    }
+    const named = protons > 118 || (electrons >= ION_MIN_E[protons] && electrons <= ION_MAX_E[protons]);
+    if (!named) showChemWarn("warn", "این یون در طبیعت پایدار نیست");
     if (Math.max(protons, neutrons, electrons) > BIG_LIMIT) {
-        pendingCounts = { protons, neutrons, electrons };
+        pendingCounts = { protons, neutrons, electrons, named };
         bigWarn.hidden = false;
         return;
     }
-    applyCounts(protons, neutrons, electrons);
+    applyCounts(protons, neutrons, electrons, named);
 });
 
-function applyCounts(protons, neutrons, electrons) {
+function applyCounts(protons, neutrons, electrons, named) {
     bigWarn.hidden = true;
     pendingCounts = null;
-    lastCounts = { protons, neutrons, electrons };
+    if (named && STABLE_E.indexOf(electrons) === -1) {
+        showChemWarn("info", "تعداد الکترون‌ها با آرایش پایدار لایه‌ها مطابقت ندارد");
+    } else if (named) {
+        hideChemWarn();
+    }
+    lastCounts = { protons, neutrons, electrons, named: named !== false };
     render();
     downloadBtn.disabled = false;
     captionText.textContent = `پروتون: ${protons} - نوترون: ${neutrons} - الکترون: ${electrons}`;
@@ -985,7 +1061,7 @@ function applyCounts(protons, neutrons, electrons) {
 
 bigWarnYes.addEventListener("click", () => {
     if (!pendingCounts) return;
-    applyCounts(pendingCounts.protons, pendingCounts.neutrons, pendingCounts.electrons);
+    applyCounts(pendingCounts.protons, pendingCounts.neutrons, pendingCounts.electrons, pendingCounts.named);
 });
 
 bigWarnNo.addEventListener("click", () => {
@@ -1008,4 +1084,5 @@ downloadBtn.addEventListener("click", () => {
     link.click();
 });
 
+syncProtonValidity();
 render();

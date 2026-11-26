@@ -33,6 +33,9 @@
     --warn: #b45309;
     --warn-soft: rgba(245, 158, 11, 0.10);
     --warn-line: rgba(245, 158, 11, 0.45);
+    --danger: #b91c1c;
+    --danger-soft: rgba(239, 68, 68, 0.08);
+    --danger-line: rgba(239, 68, 68, 0.40);
     --pt-alk: #fde8e8;
     --pt-ae: #fdf1d6;
     --pt-tr: #e4f1e6;
@@ -62,6 +65,9 @@
     --warn: #fbbf24;
     --warn-soft: rgba(245, 158, 11, 0.08);
     --warn-line: rgba(245, 158, 11, 0.35);
+    --danger: #f87171;
+    --danger-soft: rgba(239, 68, 68, 0.10);
+    --danger-line: rgba(239, 68, 68, 0.35);
     --pt-alk: rgba(248, 113, 113, 0.16);
     --pt-ae: rgba(250, 204, 21, 0.14);
     --pt-tr: rgba(74, 222, 128, 0.12);
@@ -372,6 +378,59 @@ body {
 .big-warn-actions .btn-ghost {
     background: transparent;
     color: var(--ink);
+}
+
+.chem-warn[hidden] {
+    display: none;
+}
+
+.chem-warn {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--warn-line);
+    background: var(--warn-soft);
+    border-radius: 12px;
+}
+
+.chem-warn-text {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.7;
+    color: var(--warn);
+}
+
+.chem-warn-text .bi {
+    font-size: 16px;
+    margin-top: 2px;
+    color: var(--warn);
+    flex-shrink: 0;
+}
+
+.chem-warn-text p {
+    margin: 0;
+}
+
+.chem-warn--error {
+    border-color: var(--danger-line);
+    background: var(--danger-soft);
+}
+
+.chem-warn--error .chem-warn-text,
+.chem-warn--error .chem-warn-text .bi {
+    color: var(--danger);
+}
+
+.chem-warn--info {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.chem-warn--info .chem-warn-text,
+.chem-warn--info .chem-warn-text .bi {
+    color: var(--accent);
 }
 
 .preview-top {
