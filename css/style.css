@@ -640,10 +640,10 @@ body {
 
 .pt-info-uses img {
     display: block;
-    width: 100%;
+    max-width: 100%;
     height: auto;
+    margin: 0 auto 8px;
     border-radius: 8px;
-    margin-bottom: 8px;
 }
 
 .pt-info-uses img[hidden] {
